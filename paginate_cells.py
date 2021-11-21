@@ -46,7 +46,7 @@ nrowsinput = input('Select rows to paginate(leave blank for all):')
 if workbookfile.endswith('xls'):
     ranges_ = range_expand(input_r = str(nrowsinput), delim=',', first_n=0, last_n=len(xlsfile_)-1)
 nth_row = int(input('Rows on each "page":'))
-every_n_col = int(input('Columns on each "page":'))
+nth_col = int(input('Columns on each "page":'))
 divm_rows_uneven = divmod(len(ranges_),nth_row)
 numberofpages = divm_rows_uneven[0]#the number of pages that can be divided evenly into sections of nth_row rows
 unadvance_row = nth_row#to track the head of the current 
@@ -58,7 +58,7 @@ for iter, n in enumerate(ranges_[::nth_row*2]):
             if next_rown_after < numberofpages*nth_row:
                 row_values_next = [value if value else '' for value in xlsfile_[ranges_[next_rown_after]]] 
                 row_values.extend(row_values_next)
-                for col in range(every_n_col*2):
+                for col in range(nth_col*2):
                     if rownum > nth_row:
                         writesheet.write(rownum-(unadvance_row*iter), col, str(row_values[col]))#write to header line of page
                     else:
@@ -74,14 +74,14 @@ for iter, n in enumerate(ranges_[::nth_row*2]):
                     for rownum in ranges_[remainder_row:remainder_row+nth_row]:
                         #left page(remainder_row until the next nth_rows)
                         row_values = [value if value else '' for value in xlsfile_[ranges_[rownum]]]
-                        for col in range(every_n_col):
+                        for col in range(nth_col):
                             writesheet.write(last_iter_, col, str(row_values[col]))
                         last_iter_+=1
                     for rownum in ranges_[remainder_row+nth_row:len(ranges_)-1]:
                         #right page(remainder_row+nth_rows until the last row number)
                         row_values = [value if value else '' for value in xlsfile_[ranges_[rownum]]]
-                        for col in range(every_n_col):
-                            writesheet.write(last_iter_-nth_row, col+every_n_col, str(row_values[col]))
+                        for col in range(nth_col):
+                            writesheet.write(last_iter_-nth_row, col+nth_col, str(row_values[col]))
                         last_iter_+=1#keep track manually of next row
                 break
 writebook.save(writefile)
