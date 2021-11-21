@@ -21,7 +21,8 @@ def remove_ext(ifile):
        return ifile[:ifile.rindex(".")]
 #Example:
 #    print(range_expand(input_r='start..2,3:8,9..end',first_n=1,last_n=10))
-#    > [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+#    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+#    returns 0 based values for spreadsheet xlrd library
 def range_expand(input_r="", delim=",", first_n=1, last_n=10):
     _ranges = []
     if input_r and not input_r.isnumeric():
@@ -38,12 +39,12 @@ def range_expand(input_r="", delim=",", first_n=1, last_n=10):
                 elif '..' in range_substr:
                     range_substr = str(range_substr).replace('..',':')
                     delim_find = str(range_substr).index(':')
-                from_n = str(range_substr)[:delim_find].strip('(').strip(')')
-                to_n = str(range_substr)[delim_find+1:].strip('(').strip(')')
+                from_n = str(range_substr)[:delim_find]
+                to_n = str(range_substr)[delim_find+1:]
                 if from_n.isnumeric():
-                    from_n = int(from_n)
+                    from_n = int(from_n)-1
                 elif 'start' in from_n:
-                    from_n = first_n
+                    from_n = first_n-1
                 if to_n.isnumeric():
                     to_n = int(to_n)
                 elif 'end' in to_n:
@@ -52,15 +53,15 @@ def range_expand(input_r="", delim=",", first_n=1, last_n=10):
                     temp = int(to_n)
                     to_n = int(from_n)
                     from_n = temp
-                for n in range(int(from_n),int(to_n)+1):
+                for n in range(int(from_n),int(to_n)):
                     _ranges.append(n)
             elif range_substr.isnumeric():
-                _ranges.append(int(range_substr))
+                _ranges.append(int(range_substr)-1)
         return list(sorted(set(_ranges)))
     elif not input_r:
-        for n in range(first_n,last_n+1):
+        for n in range(first_n-1,last_n):
             _ranges.append(n)
         return list(sorted(set(_ranges)))
     elif input_r.isnumeric():
-        _ranges.append(int(input_r))
+        _ranges.append(int(input_r)-1)
         return _ranges
