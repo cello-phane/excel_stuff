@@ -1,4 +1,3 @@
-import csv
 import xlrd
 def open_excel(to_read, sheet_num=0):
     def read_lines(workbook):
@@ -19,11 +18,15 @@ def containsNumber(value):
 def remove_ext(ifile):
    if '.' in str(ifile)[-5:]:
        return ifile[:ifile.rindex(".")]
+def col_to_n(letter):
+    letters=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+    if letter.upper() in letters:
+        return letters.index(letter.upper())
 #Example:
-#    print(range_expand(input_r='start..2,3:8,9..end',first_n=1,last_n=10))
+#    print(range_expand(input_r='',first_n=1,last_n=10))
 #    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 #    returns 0 based values for spreadsheet xlrd library
-def range_expand(input_r="", delim=",", first_n=1, last_n=10):
+def range_expand(input_r="", delim=",", first_n=0, last_n=9):
     _ranges = []
     if input_r and not input_r.isnumeric():
         comma_sep_str=[]
@@ -42,9 +45,11 @@ def range_expand(input_r="", delim=",", first_n=1, last_n=10):
                 from_n = str(range_substr)[:delim_find]
                 to_n = str(range_substr)[delim_find+1:]
                 if from_n.isnumeric():
-                    from_n = int(from_n)-1
+                    #from_n = int(from_n)-1
+                    from_n = int(from_n)
                 elif 'start' in from_n:
-                    from_n = first_n-1
+                    #from_n = first_n-1
+                    from_n = first_n
                 if to_n.isnumeric():
                     to_n = int(to_n)
                 elif 'end' in to_n:
@@ -53,15 +58,14 @@ def range_expand(input_r="", delim=",", first_n=1, last_n=10):
                     temp = int(to_n)
                     to_n = int(from_n)
                     from_n = temp
-                for n in range(int(from_n),int(to_n)):
+                for n in range(int(from_n)-1,int(to_n)-1):
                     _ranges.append(n)
             elif range_substr.isnumeric():
                 _ranges.append(int(range_substr)-1)
+                #_ranges.append(int(range_substr))
         return list(sorted(set(_ranges)))
     elif not input_r:
-        for n in range(first_n-1,last_n):
+        #for n in range(first_n-1,last_n):
+        for n in range(first_n,last_n):
             _ranges.append(n)
         return list(sorted(set(_ranges)))
-    elif input_r.isnumeric():
-        _ranges.append(int(input_r)-1)
-        return _ranges
