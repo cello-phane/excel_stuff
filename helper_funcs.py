@@ -22,10 +22,15 @@ def col_to_n(letter):
     letters=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
     if letter.upper() in letters:
         return letters.index(letter.upper())
-#Example:
-#    print(range_expand(input_r='',first_n=1,last_n=10))
+#Examples:
+#    range_expand(input_r='',first_n=1,last_n=10)
+#    returns
 #    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+#    
+#    with open_excel(to_read=excelpath,sheet_num=int(worksheet_number)-1) as xlsfile_
+#    range_expand(input_r='1,2,3:8,9:10',first_n=0,last_n=len(xlsfile_)-1))
 #    returns 0 based values for spreadsheet xlrd library
+#    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 def range_expand(input_r="", delim=",", first_n=0, last_n=9):
     _ranges = []
     if input_r and not input_r.isnumeric():
