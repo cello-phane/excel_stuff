@@ -53,7 +53,6 @@ for iter, n in enumerate(ranges_[::nth_rows*pages]):
         new_row+=1
 tail_start_row = new_row-nth_rows
 tail_col_start = len(nth_cols.split(','))
-endouterloop = False
 if divm_rows_uneven[1]:
     if divm_rows_uneven[1] < nth_rows:
         for enum,n in enumerate(ranges_[nth_rows*numberofpages:]):
