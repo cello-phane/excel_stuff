@@ -28,10 +28,8 @@ divm_rows_uneven = divmod(len(ranges_),int(nth_rows))
 numberofpages = divm_rows_uneven[0]#the number of pages that can be divided evenly into sections of nth_row rows
 new_row = 0
 col_iter = 0
+tail_start_row = 0
 for iter, n in enumerate(ranges_[::nth_rows*pages]):
-    if divm_rows_uneven[1] > 0:
-        if iter > numberofpages-1:
-            break
     for rownum in ranges_[n:n+nth_rows]:
         col_iter = 0
         row_values = [value for value in xlsfile_[rownum]]
@@ -44,26 +42,22 @@ for iter, n in enumerate(ranges_[::nth_rows*pages]):
         for p in range(pages):
             for col in nth_cols.split(','):
                 colnum_ = int(col_to_n(str(col)))
-                if p is not pages/2:
+                if p < pages/2:
                     writesheet.write(new_row, col_iter, str(row_values[colnum_]))
                 else:
                     if row_values_r:
                         writesheet.write(new_row, col_iter, str(row_values[colnum_+len(row_values_r)]))
                 col_iter+=1
         new_row+=1
-tail_start_row = new_row-nth_rows
-tail_col_start = len(nth_cols.split(','))
-if divm_rows_uneven[1]:
-    if divm_rows_uneven[1] < nth_rows:
-        for enum,n in enumerate(ranges_[nth_rows*numberofpages:]):
-            col_tail = tail_col_start
-            if enum <= nth_rows:         
-                row_values = [value for value in xlsfile_[ranges_[n]]]
-                for col in nth_cols.split(','):
-                    colnum_ = int(col_to_n(str(col)))
-                    writesheet.write(tail_start_row, col_tail, str(row_values[colnum_]))
-                    col_tail+=1
-            else:
-                break
-            tail_start_row+=1
+offset_ = (new_row - nth_rows * pages) + (nth_rows*2)+divm_rows_uneven[1]
+start_row = new_row - nth_rows
+if (divm_rows_uneven[1] + len(ranges_) - offset_) != nth_rows:
+    for rownum in ranges_[(numberofpages)*nth_rows:]:
+        col_iter = len(nth_cols.split(','))
+        row_values = [value for value in xlsfile_[rownum]]
+        for col in nth_cols.split(','):
+            colnum_ = int(col_to_n(str(col)))
+            writesheet.write(start_row, col_iter, str(row_values[colnum_]))
+            col_iter+=1
+        start_row+=1
 writebook.save(writefile)
