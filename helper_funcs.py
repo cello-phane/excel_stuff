@@ -1,8 +1,10 @@
 import xlrd
-def open_excel(to_read, sheet_num=0):
+def open_excel(to_read, sheet_num=0, ranges=''):
     def read_lines(workbook):
         sheet = workbook.sheet_by_index(sheet_num)
-        for row in range(sheet.nrows):
+        if not ranges:
+            cellranges = sheet.nrows
+        for row in ranges:
             yield [sheet.cell(row, col).value for col in range(sheet.ncols)]
     try:
         workbook = xlrd.open_workbook(to_read)
@@ -10,6 +12,10 @@ def open_excel(to_read, sheet_num=0):
     except (IOError, ValueError):
         print("Couldn't read from file %s." % (to_read))
         raise
+def get_xls_length(to_read,sheet_num=0):
+    workbook = xlrd.open_workbook(to_read)
+    sheet = workbook.sheet_by_index(sheet_num)
+    return sheet.nrows+1
 def containsNumber(value):
     for character in value:
         if character.isdigit():
@@ -31,7 +37,7 @@ def col_to_n(letter):
 #    range_expand(input_r='1,2,3:8,9:10',first_n=0,last_n=len(xlsfile_)-1))
 #    returns 0 based values for spreadsheet xlrd library
 #    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-def range_expand(input_r="", delim=",", first_n=0, last_n=9):
+def cellranges(input_r="", delim=",", first_n=1, last_n=10):
     _ranges = []
     if input_r and not input_r.isnumeric():
         comma_sep_str=[]
@@ -50,27 +56,19 @@ def range_expand(input_r="", delim=",", first_n=0, last_n=9):
                 from_n = str(range_substr)[:delim_find]
                 to_n = str(range_substr)[delim_find+1:]
                 if from_n.isnumeric():
-                    #from_n = int(from_n)-1
                     from_n = int(from_n)
                 elif 'start' in from_n:
-                    #from_n = first_n-1
                     from_n = first_n
                 if to_n.isnumeric():
                     to_n = int(to_n)
                 elif 'end' in to_n:
                     to_n = last_n
-                if int(to_n) < int(from_n):
-                    temp = int(to_n)
-                    to_n = int(from_n)
-                    from_n = temp
-                for n in range(int(from_n)-1,int(to_n)-1):
-                    _ranges.append(n)
+                for n in range(int(from_n),int(to_n)):
+                    _ranges.append(n-1)
             elif range_substr.isnumeric():
                 _ranges.append(int(range_substr)-1)
-                #_ranges.append(int(range_substr))
         return list(sorted(set(_ranges)))
     elif not input_r:
-        #for n in range(first_n-1,last_n):
         for n in range(first_n,last_n):
-            _ranges.append(n)
+            _ranges.append(n-1)
         return list(sorted(set(_ranges)))
