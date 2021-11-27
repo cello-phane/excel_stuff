@@ -3,9 +3,11 @@ def open_excel(to_read, sheet_num=0, ranges=''):
     def read_lines(workbook):
         sheet = workbook.sheet_by_index(sheet_num)
         if not ranges:
-            cellranges = sheet.nrows
-        for row in ranges:
-            yield [sheet.cell(row, col).value for col in range(sheet.ncols)]
+            for row in range(sheet.nrows):
+                yield [sheet.cell(row, col).value for col in range(sheet.ncols)]
+        else:
+            for row in ranges:
+                yield [sheet.cell(row, col).value for col in range(sheet.ncols)]
     try:
         workbook = xlrd.open_workbook(to_read)
         return [line for line in read_lines(workbook)]
@@ -15,7 +17,7 @@ def open_excel(to_read, sheet_num=0, ranges=''):
 def get_xls_length(to_read,sheet_num=0):
     workbook = xlrd.open_workbook(to_read)
     sheet = workbook.sheet_by_index(sheet_num)
-    return sheet.nrows+1
+    return sheet.nrows
 def containsNumber(value):
     for character in value:
         if character.isdigit():
@@ -63,12 +65,12 @@ def cellranges(input_r="", delim=",", first_n=1, last_n=10):
                     to_n = int(to_n)
                 elif 'end' in to_n:
                     to_n = last_n
-                for n in range(int(from_n),int(to_n)):
-                    _ranges.append(n-1)
+                for n in range(int(from_n)-1,int(to_n)-1):
+                    _ranges.append(n)
             elif range_substr.isnumeric():
                 _ranges.append(int(range_substr)-1)
         return list(sorted(set(_ranges)))
     elif not input_r:
-        for n in range(first_n,last_n):
-            _ranges.append(n-1)
+        for n in range(first_n-1,last_n-1):
+            _ranges.append(n)
         return list(sorted(set(_ranges)))
