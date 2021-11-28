@@ -17,7 +17,7 @@ def open_excel(to_read, sheet_num=0, ranges=''):
 def get_xls_length(to_read,sheet_num=0):
     workbook = xlrd.open_workbook(to_read)
     sheet = workbook.sheet_by_index(sheet_num)
-    return sheet.nrows
+    return sheet.nrows+1
 def containsNumber(value):
     for character in value:
         if character.isdigit():
@@ -31,12 +31,11 @@ def col_to_n(letter):
     if letter.upper() in letters:
         return letters.index(letter.upper())
 #Examples:
-#    range_expand(input_r='',first_n=1,last_n=10)
+#    cellranges(input_r='',delim=',',first_n=1,last_n=10)
 #    returns
 #    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 #    
-#    with open_excel(to_read=excelpath,sheet_num=int(worksheet_number)-1) as xlsfile_
-#    range_expand(input_r='1,2,3:8,9:10',first_n=0,last_n=len(xlsfile_)-1))
+#    cellranges(input_r='1,2,3:8,9:10',delim=',',first_n=0,last_n=len(xlsfile_)-1))
 #    returns 0 based values for spreadsheet xlrd library
 #    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 def cellranges(input_r="", delim=",", first_n=1, last_n=10):
@@ -65,12 +64,12 @@ def cellranges(input_r="", delim=",", first_n=1, last_n=10):
                     to_n = int(to_n)
                 elif 'end' in to_n:
                     to_n = last_n
-                for n in range(int(from_n)-1,int(to_n)-1):
+                for n in range(int(from_n)-1,int(to_n)):
                     _ranges.append(n)
             elif range_substr.isnumeric():
                 _ranges.append(int(range_substr)-1)
         return list(sorted(set(_ranges)))
     elif not input_r:
-        for n in range(first_n-1,last_n-1):
+        for n in range(first_n-1,last_n):
             _ranges.append(n)
         return list(sorted(set(_ranges)))
