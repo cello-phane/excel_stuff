@@ -15,15 +15,15 @@ writesheet = writebook.add_sheet(str(remove_ext(workbookfile)).strip('\\'), cell
 writefile = xlspath + str(remove_ext(workbookfile)) + "_new.xls"
 cellranges_= []
 worksheet_number = input('Worksheet #:')
-nrowsinput = input('Select rows to paginate(leave blank for all):')
+#nrowsinput = input('Select rows to paginate(leave blank for all):')
 if workbookfile.lower().endswith('xls'):
     if containsNumber(worksheet_number):
         xlslen = get_xls_length(excelpath,sheet_num=int(worksheet_number)-1)
-        cellranges_ = cellranges(input_r = str(nrowsinput), delim=',', first_n=1, last_n=xlslen)
+        cellranges_ = cellranges(input_r = "", delim=',', first_n=1, last_n=xlslen)
         xlsfile_ = open_excel(to_read=excelpath,sheet_num=int(worksheet_number)-1,ranges=cellranges_)
     else:
         xlslen = get_xls_length(excelpath,sheet_num=0)
-        cellranges_ = cellranges(input_r = str(nrowsinput), delim=',', first_n=1, last_n=xlslen)
+        cellranges_ = cellranges(input_r = "", delim=',', first_n=1, last_n=xlslen)
         xlsfile_ = open_excel(to_read=excelpath,sheet_num=0,ranges=cellranges_)
 nth_rows = int(input('Number of rows on each subpage:'))
 nth_cols = input('Columns on each subpage(Ex. a,b,c,D,E,F):')
@@ -33,21 +33,13 @@ numberofpages = divm_rows_uneven[0]#the number of pages that can be divided even
 new_row = 0
 col_iter = 0
 tail_start_row = 0
-diff = xlslen - len(cellranges_)
-done = False
 for iter, n in enumerate(cellranges_[::nth_rows*pages]):
     for rownum in cellranges_[n:n+nth_rows]:
         col_iter = 0
-        if not diff:
-            if rownum < xlslen:
-                try:
-                    row_values = [value for value in xlsfile_[rownum]]
-                except:
-                    done = True
-                    break
-        elif diff:
-            if rownum < len(cellranges_):
-                row_values = [value for value in xlsfile_[rownum]]
+        try:
+            row_values = [value for value in xlsfile_[rownum]]
+        except:
+            break
         next_rown_after_=rownum+nth_rows
         if next_rown_after_ < numberofpages*nth_rows:
             row_values_r = [value for value in xlsfile_[cellranges_[next_rown_after_]]]
@@ -64,23 +56,16 @@ for iter, n in enumerate(cellranges_[::nth_rows*pages]):
                         writesheet.write(new_row, col_iter, str(row_values[colnum_+len(row_values_r)]))
                 col_iter+=1
         new_row+=1
-    if done or n+divm_rows_uneven[1] == len(cellranges_)+1:
-        break
-offset_ = (new_row - nth_rows * pages) + (nth_rows*2) + divm_rows_uneven[1]
+diff_= (len(cellranges_)-nth_rows-divm_rows_uneven[1]+(xlslen - len(cellranges_)))
 start_row = new_row - nth_rows
-if (divm_rows_uneven[1] + len(cellranges_) - offset_) > nth_rows and not done:
+if diff_-(xlslen - len(cellranges_)) != nth_rows:
     start_at = numberofpages*nth_rows
     for rownum in cellranges_[start_at:]:
         col_iter = len(nth_cols.split(','))
-        if not diff: 
-            if rownum < xlslen:
-                try:
-                    row_values = [value for value in xlsfile_[rownum]]
-                except:
-                    break
-        elif diff:
-            if rownum < len(cellranges_):
-                row_values = [value for value in xlsfile_[rownum]]
+        try:
+            row_values = [value for value in xlsfile_[rownum]]
+        except:
+            break
         for col in nth_cols.split(','):
             colnum_ = int(col_to_n(str(col)))
             writesheet.write(start_row, col_iter, str(row_values[colnum_]))
