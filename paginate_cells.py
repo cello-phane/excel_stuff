@@ -56,9 +56,9 @@ for iter, n in enumerate(cellranges_[::nth_rows*pages]):
                         writesheet.write(new_row, col_iter, str(row_values[colnum_+len(row_values_r)]))
                 col_iter+=1
         new_row+=1
-diff_= (len(cellranges_)-nth_rows-divm_rows_uneven[1]+(xlslen - len(cellranges_)))
+diff_= (len(cellranges_)-nth_rows-divm_rows_uneven[1])
 start_row = new_row - nth_rows
-if diff_-(xlslen - len(cellranges_)) != nth_rows:
+if diff_ != nth_rows:
     start_at = numberofpages*nth_rows
     for rownum in cellranges_[start_at:]:
         col_iter = len(nth_cols.split(','))
