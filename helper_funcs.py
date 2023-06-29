@@ -32,13 +32,13 @@ def col_to_n(letter):
     if letter.upper() in letters:
         return letters.index(letter.upper())
 #Examples:
-#    cellranges(input_r='',delim=',',first_n=1,last_n=10)
+#    generate_sequence(input_r='',delim=',',first_n=1,last_n=10)
 #    returns
 #    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 #    
-#    cellranges(input_r='1,2,3:8,9:10',delim=',',first_n=0,last_n=len(xlsfile_)-1))
-#    returns 0 based values for spreadsheet xlrd library
-#    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+#    generate_sequence(input_r='3:8,10:20',delim=',',first_n=1,last_n=10)
+#    returns 0 based values for spreadsheet xlrd library (2 to 7, then 9 to 19)
+#    > [2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 def generate_sequence(input_r="", delim=",", first_n=1, last_n=10):
     sequence = []
 
