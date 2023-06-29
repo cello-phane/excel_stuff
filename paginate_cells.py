@@ -19,11 +19,11 @@ worksheet_number = input('Worksheet #:')
 if workbookfile.lower().endswith('xls'):
     if containsNumber(worksheet_number):
         xlslen = get_xls_length(excelpath,sheet_num=int(worksheet_number)-1)
-        cellranges_ = cellranges(input_r = "", delim=',', first_n=1, last_n=xlslen)
+        cellranges_ = generate_sequence(input_r = "", delim=',', first_n=1, last_n=xlslen)
         xlsfile_ = open_excel(to_read=excelpath,sheet_num=int(worksheet_number)-1,ranges=cellranges_)
     else:
         xlslen = get_xls_length(excelpath,sheet_num=0)
-        cellranges_ = cellranges(input_r = "", delim=',', first_n=1, last_n=xlslen)
+        cellranges_ = generate_sequence(input_r = "", delim=',', first_n=1, last_n=xlslen)
         xlsfile_ = open_excel(to_read=excelpath,sheet_num=0,ranges=cellranges_)
 nth_rows = int(input('Number of rows on each subpage:'))
 nth_cols = input('Columns on each subpage(Ex. a,b,c,D,E,F):')
