@@ -1,3 +1,4 @@
+import re
 import xlrd
 def open_excel(to_read, sheet_num=0, ranges=''):
     def read_lines(workbook):
@@ -38,38 +39,18 @@ def col_to_n(letter):
 #    cellranges(input_r='1,2,3:8,9:10',delim=',',first_n=0,last_n=len(xlsfile_)-1))
 #    returns 0 based values for spreadsheet xlrd library
 #    > [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-def cellranges(input_r="", delim=",", first_n=1, last_n=10):
-    _ranges = []
+def generate_sequence(input_r="", delim=",", first_n=1, last_n=10):
+    sequence = []
+
     if input_r and not input_r.isnumeric():
-        comma_sep_str=[]
-        if delim in input_r:
-            comma_sep_str=input_r.split(delim)
-        else:
-            comma_sep_str.append(input_r)
-        delim_find=0
+        comma_sep_str = input_r.split(delim)
         for range_substr in comma_sep_str:
             if ':' in range_substr or '..' in range_substr:
-                if ':' in range_substr:
-                    delim_find = str(range_substr).index(':')
-                elif '..' in range_substr:
-                    range_substr = str(range_substr).replace('..',':')
-                    delim_find = str(range_substr).index(':')
-                from_n = str(range_substr)[:delim_find]
-                to_n = str(range_substr)[delim_find+1:]
-                if from_n.isnumeric():
-                    from_n = int(from_n)
-                elif 'start' in from_n:
-                    from_n = first_n
-                if to_n.isnumeric():
-                    to_n = int(to_n)
-                elif 'end' in to_n:
-                    to_n = last_n
-                for n in range(int(from_n)-1,int(to_n)):
-                    _ranges.append(n)
+                range_limits = [int(limit) if limit.isnumeric() else first_n if 'start' in limit else last_n for limit in re.split('[:.]+', range_substr)]
+                sequence.extend(range(range_limits[0] - 1, range_limits[1]))
             elif range_substr.isnumeric():
-                _ranges.append(int(range_substr)-1)
-        return list(sorted(set(_ranges)))
-    elif not input_r:
-        for n in range(first_n-1,last_n):
-            _ranges.append(n)
-        return list(sorted(set(_ranges)))
+                sequence.append(int(range_substr) - 1)
+    else:
+        sequence = list(range(first_n - 1, last_n))
+
+    return sorted(set(sequence))
