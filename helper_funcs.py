@@ -40,17 +40,31 @@ def col_to_n(letter):
 #    returns 0 based values for spreadsheet xlrd library (2 to 7, then 9 to 19)
 #    > [2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 def generate_sequence(input_r="", delim=",", first_n=1, last_n=10):
-    sequence = []
-
-    if input_r and not input_r.isnumeric():
+    _ranges = []
+    if input_r:
         comma_sep_str = input_r.split(delim)
         for range_substr in comma_sep_str:
-            if ':' in range_substr or '..' in range_substr:
-                range_limits = [int(limit) if limit.isnumeric() else first_n if 'start' in limit else last_n for limit in re.split('[:.]+', range_substr)]
-                sequence.extend(range(range_limits[0] - 1, range_limits[1]))
-            elif range_substr.isnumeric():
-                sequence.append(int(range_substr) - 1)
+            if 'start' in range_substr:
+                _ranges.append(first_n - 1)
+            elif 'end' in range_substr:
+                _ranges.append(last_n - 1)
+            elif ':' in range_substr or '..' in range_substr:
+                if ':' in range_substr:
+                    delim_find = str(range_substr).index(':')
+                elif '..' in range_substr:
+                    range_substr = str(range_substr).replace('..', ':')
+                    delim_find = str(range_substr).index(':')
+                from_n = str(range_substr)[:delim_find]
+                to_n = str(range_substr)[delim_find + 1:]
+                if from_n.isnumeric():
+                    from_n = int(from_n) - 1
+                if to_n.isnumeric():
+                    to_n = int(to_n) - 1
+                _ranges.extend(range(int(from_n), int(to_n) + 1))
+            else:
+                _ranges.append(int(range_substr) - 1)
     else:
-        sequence = list(range(first_n - 1, last_n))
+        _ranges = list(range(first_n - 1, last_n))
+    
+    return sorted(set(_ranges))
 
-    return sorted(set(sequence))
